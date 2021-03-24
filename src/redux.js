@@ -1,62 +1,58 @@
-/// Creating an store
+/// Creating an redux store
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import { combineReducers } from 'redux';
 
+// declaration of constant actions
 export const userConstants = {
 
-    USERNAME: 'USERNAME',
-    SET_USERNAME: 'SET_USERNAME',
-    GISTS: 'GISTS',
     SET_GISTS: 'SET_GISTS',
-    ERROR: 'ERROR',
     SET_ERROR: 'SET_ERROR'
 
 };
-
+// implementation of actions, 
 export const userActions = {
-    setUsername: (username) => (dispatch) => {
-        dispatch({ type: userConstants.SET_USERNAME, username });
-    },
     setGists: (gists) => (dispatch) => {
+        if (typeof gists == "object")
         dispatch({ type: userConstants.SET_GISTS, gists });
     },
     setError: (error) => (dispatch) => {
+        if (typeof error == "string")
         dispatch({ type: userConstants.SET_ERROR, error });
     }
 };
 
-const initialState = { username: '', gists: [], error: null }
+// initialized initial states of props
+const initialState = { gists: [], error: null }
 
-export function states(state = initialState, action) {
-    switch (action.type) {
-        case userConstants.SET_USERNAME:
-            return {
-                ...state,
-                username: action.username,
-            };
-        case userConstants.SET_GISTS:
-            return {
-                ...state,
-                error: (action.gists && action.gists.length) ? null : "Results not found",
-                gists: action.gists,
-            };
-        case userConstants.SET_ERROR:
-            return {
-                ...state,
-                error: action.error,
-            };
-        default:
-            return state
+// redux Reducer function will reactively update the nodes when nextState is changed
+export function states(state = initialState, action = { type: "", ...initialState }) {
+    if (typeof state == "object") {
+        switch (action.type) {
+            case userConstants.SET_GISTS:
+                return {
+                    ...state,
+                    error: (action.gists && action.gists.length) ? null : "Results not found",
+                    gists: action.gists,
+                };
+            case userConstants.SET_ERROR:
+                return {
+                    ...state,
+                    error: action.error,
+                };
+            default:
+                return state
+        }
     }
+    else return initialState
 }
-
 
 const rootReducer = combineReducers({
     states
 });
 
+// redux state logger for Debugging purpose
 const loggerMiddleware = createLogger();
 
 
@@ -64,6 +60,6 @@ export const store = createStore(
     rootReducer,
     applyMiddleware(
         thunkMiddleware,
-        //loggerMiddleware
+        loggerMiddleware
     )
 );

@@ -7,34 +7,45 @@ import { connect } from 'react-redux';
 
 let timeoutInstance = null;
 
-const Search = ({ setGists, setUsername, setError }) => {
+const Search = ({ setGists, setError }) => {
 
+  // react life cycle method triggered when component initialize
   useEffect(async () => {
+    // service call to fetch public gists
     const publicGists = await getPublicGists();
+
+    // setting public gists to the props by using redux
     setGists(publicGists.data);
   }, [])
 
   const handleKeyDown = async event => {
+    // clearing timeout when user still typing in search bar
     await clearTimeout(timeoutInstance);
+
+    // reinitiate timeout to trigger the api call once the user stop typing for half second
     timeoutInstance = setTimeout(() => {
       fetch(event)
     }, 500)
   }
+
+  // fetching all public gists or public gists by username filter 
+  // it is asyncronous function
   const fetch = async (event) => {
-    setUsername(event.target.value);
+    
     if (event.target.value) {
       try {
         const userGists = await getGistForUser(event.target.value);
         await setGists(userGists.data);
       } catch (error) {
-        setError(error);
         setGists([]);
       }
     } else {
+      // resetting username filter and get first 30 gists
       const publicGists = await getPublicGists();
       await setGists(publicGists.data);
     }
   }
+  // rendering the results
   return (
     <Wrapper>
       <InputBox>
@@ -73,5 +84,6 @@ const Input = styled.input`
   }
 `;
 
+// connection to component to redux store for managing states
 // connect( Mapping states to props , Mapping Actions to Props) (Component)
 export default connect(({ states }) => states, userActions)(Search);

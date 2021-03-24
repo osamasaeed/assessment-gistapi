@@ -16,10 +16,11 @@ import {
     ChatBubbleOutline,
     Code,
     FileCopy,
-    Restaurant
+    DeviceHub
 } from '@material-ui/icons';
 import moment from 'moment';
 
+// Single Gist Wrapper component
 const Gist = ({ gist }) => {
 
     return (
@@ -77,7 +78,7 @@ const Gist = ({ gist }) => {
                             >
                                 <ListItem>
                                     <ListItemAvatar>
-                                        <Restaurant className={styles.assetsIcon} />
+                                        <DeviceHub className={styles.assetsIcon} />
                                     </ListItemAvatar>
                                     <ListItemText primary={
                                         <Typography style={styles.assets}>
